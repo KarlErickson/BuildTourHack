@@ -8,9 +8,12 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
     public interface IOrdersStore : IDisposable
     {
         Task<bool> Connected();
-        IEnumerable<Domain.Shipping> GetShippings();
+        IEnumerable<Shipping> GetShippings();
         Shipping GetShipping(string orderId);
-        void CreateOrder(Domain.Order order);
-        void UpdateOrder(Domain.Order order);
+        IEnumerable<Receiving> GetReceivings();
+        Receiving GetReceiving(string orderId);
+        Task<Order> UpsertAsync(Domain.Order order);
+        Task DeleteOrderAsync(string orderId);
+        IEnumerable<PostalCarrier> GetPostalCarriers();
     }
 }

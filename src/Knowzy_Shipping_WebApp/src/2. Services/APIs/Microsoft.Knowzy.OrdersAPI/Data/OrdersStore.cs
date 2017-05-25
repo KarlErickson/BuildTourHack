@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Azure.Documents.Client;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Azure.Documents;
+using Microsoft.Knowzy.Domain;
 
 namespace Microsoft.Knowzy.OrdersAPI.Data
 {
@@ -38,38 +40,25 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 
         public IEnumerable<Domain.Shipping> GetShippings()
         {
-            var orders = _client.CreateDocumentQuery<Domain.Shipping>(
+            return _client.CreateDocumentQuery<Domain.Shipping>(
                 _ordersLink,
                 "SELECT * FROM orders o WHERE o.type='shipping'",
                 _options).ToList();
-
-            if (orders != null && orders.Count() > 0)
-                return orders;
-            else
-                return null;
         }
 
         public Domain.Shipping GetShipping(string orderId)
         {
-            var orders = _client.CreateDocumentQuery<Domain.Shipping>(
+            return _client.CreateDocumentQuery<Domain.Shipping>(
                 _ordersLink,
-                $"SELECT * FROM orders o WHERE o.id='{orderId}'",
-                _options).ToList();
-
-            if (orders != null && orders.Count() > 0)
-                return orders.First();
-            else
-                return null;
-        }
-
-        public async void CreateOrder(Domain.Order order)
-        {
-             await _client.CreateDocumentAsync(_ordersLink.ToString(), order);
-        }
-
-        public async void UpdateOrder(Domain.Order order)
-        {
-            await _client.UpsertDocumentAsync(_ordersLink.ToString(), order);
+                new SqlQuerySpec
+                {
+                    QueryText = "SELECT TOP 1 * FROM orders o WHERE (o.id = @orderid)",
+                    Parameters = new SqlParameterCollection()
+                    {
+                     new SqlParameter("@orderid", orderId)
+                    }
+                },
+                _options).FirstOrDefault();
         }
 
         private bool disposedValue = false; // To detect redundant calls
@@ -88,6 +77,49 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
         void IDisposable.Dispose()
         {
             Dispose(true);
+        }
+
+        public IEnumerable<Receiving> GetReceivings()
+        {
+            return _client.CreateDocumentQuery<Domain.Receiving>(
+                _ordersLink,
+                "SELECT * FROM orders o WHERE o.type='receiving'",
+                _options).ToList();
+        }
+
+        public Receiving GetReceiving(string orderId)
+        {
+            return _client.CreateDocumentQuery<Domain.Receiving>(
+                _ordersLink,
+                new SqlQuerySpec
+                {
+                    QueryText = "SELECT TOP 1 * FROM orders o WHERE (o.id = @orderid)",
+                    Parameters = new SqlParameterCollection()
+                    {
+                     new SqlParameter("@orderid", orderId)
+                    }
+                },
+                _options).FirstOrDefault();
+        }
+        
+        public async Task<Order> UpsertAsync(Order order)
+        {
+            Document doc = await _client.UpsertDocumentAsync(_ordersLink.ToString(), order);
+            Order response = (dynamic)doc;
+            return response;
+        }
+
+        public async Task DeleteOrderAsync(string orderId)
+        {
+            await _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri("knowzydb", "orders", orderId));
+        }
+
+        public IEnumerable<PostalCarrier> GetPostalCarriers()
+        {
+            return _client.CreateDocumentQuery<PostalCarrier>(
+                    _ordersLink,
+                    "SELECT o.postalCarrier FROM orders o",
+                    _options).ToList().Distinct();
         }
     }
 }
