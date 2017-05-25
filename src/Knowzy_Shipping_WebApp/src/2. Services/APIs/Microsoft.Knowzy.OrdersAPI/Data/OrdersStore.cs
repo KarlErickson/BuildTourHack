@@ -11,6 +11,8 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
     {
         private readonly DocumentClient _client;
         private Uri _ordersLink;
+        private FeedOptions _options = new FeedOptions();
+
         public OrdersStore(IConfiguration config)
         {
             var EndpointUri = config["COSMOSDB_ENDPOINT"];
@@ -18,6 +20,7 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
             _client = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
             //Make sure the below values match your set up
             _ordersLink = UriFactory.CreateDocumentCollectionUri("knowzydb", "orders");
+            _options.EnableCrossPartitionQuery = true;
         }
 
         public async Task<bool> Connected()
@@ -35,13 +38,10 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 
         public IEnumerable<Domain.Shipping> GetShippings()
         {
-            FeedOptions options = new FeedOptions();
-            options.EnableCrossPartitionQuery = true;
-
             var orders = _client.CreateDocumentQuery<Domain.Shipping>(
                 _ordersLink,
                 "SELECT * FROM orders o WHERE o.type='shipping'",
-                options).ToList();
+                _options).ToList();
 
             if (orders != null && orders.Count() > 0)
                 return orders;
@@ -49,7 +49,30 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
                 return null;
         }
 
-    private bool disposedValue = false; // To detect redundant calls
+        public Domain.Shipping GetShipping(string orderId)
+        {
+            var orders = _client.CreateDocumentQuery<Domain.Shipping>(
+                _ordersLink,
+                $"SELECT * FROM orders o WHERE o.id='{orderId}'",
+                _options).ToList();
+
+            if (orders != null && orders.Count() > 0)
+                return orders.First();
+            else
+                return null;
+        }
+
+        public async void CreateOrder(Domain.Order order)
+        {
+             await _client.CreateDocumentAsync(_ordersLink.ToString(), order);
+        }
+
+        public async void UpdateOrder(Domain.Order order)
+        {
+            await _client.UpsertDocumentAsync(_ordersLink.ToString(), order);
+        }
+
+        private bool disposedValue = false; // To detect redundant calls
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

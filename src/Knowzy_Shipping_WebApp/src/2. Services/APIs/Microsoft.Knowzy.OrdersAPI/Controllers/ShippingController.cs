@@ -13,11 +13,51 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
         {
             _ordersStore = ordersStore;
         }
-        // GET api/values
+        // GET api/Shippping
         [HttpGet]
         public IEnumerable<Domain.Shipping> Get()
         {
             return _ordersStore.GetShippings();
+        }
+
+        // GET api/Shipping/5
+        [HttpGet("{orderId}")]
+        public Domain.Shipping GetShipping(string orderId)
+        {
+            return _ordersStore.GetShipping(orderId);
+        }
+
+        //POST
+        [HttpPost]
+        public IActionResult Create([FromBody] Domain.Shipping order)
+        {
+            if (order == null)
+            {
+                return BadRequest();
+            }
+
+            _ordersStore.CreateOrder(order);
+
+            return CreatedAtRoute("Create", new { id = order.Id }, order);
+        }
+
+        // PUT
+        [HttpPut("{orderId}")]
+        public IActionResult Update(string orderId, [FromBody] Domain.Shipping order)
+        {
+            if (order == null || order.Id != orderId)
+            {
+                return BadRequest();
+            }
+
+            var dbOrder = _ordersStore.GetShipping(orderId);
+            if (dbOrder == null)
+            {
+                return NotFound();
+            }
+
+            _ordersStore.UpdateOrder(order);
+            return new NoContentResult();
         }
     }
 }
