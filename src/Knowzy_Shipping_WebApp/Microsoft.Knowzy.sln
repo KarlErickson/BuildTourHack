@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Knowzy.OrdersAPI"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Knowzy.ProductsAPI", "src\2. Services\APIs\Microsoft.Knowzy.ProductsAPI\Microsoft.Knowzy.ProductsAPI.csproj", "{D3551BAF-4E62-4742-AA7A-D52ACDAAA074}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{AF9766A3-A892-4DDA-860D-D7DB0923A676}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{D3551BAF-4E62-4742-AA7A-D52ACDAAA074}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3551BAF-4E62-4742-AA7A-D52ACDAAA074}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3551BAF-4E62-4742-AA7A-D52ACDAAA074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF9766A3-A892-4DDA-860D-D7DB0923A676}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF9766A3-A892-4DDA-860D-D7DB0923A676}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF9766A3-A892-4DDA-860D-D7DB0923A676}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF9766A3-A892-4DDA-860D-D7DB0923A676}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
