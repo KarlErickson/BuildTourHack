@@ -12,7 +12,8 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
         Shipping GetShipping(string orderId);
         IEnumerable<Receiving> GetReceivings();
         Receiving GetReceiving(string orderId);
-        Task UpsertOrder(Order order);
+        Task<Order> UpsertAsync(Domain.Order order);
+        Task DeleteOrderAsync(string orderId);
         IEnumerable<PostalCarrier> GetPostalCarriers();
     }
 }

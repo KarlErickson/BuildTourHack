@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Knowzy.OrdersAPI.Data;
+using System.Threading.Tasks;
 
 namespace Microsoft.Knowzy.OrdersAPI.Controllers
 {
@@ -13,7 +14,6 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
         {
             _ordersStore = ordersStore;
         }
-
         // GET api/Shippping
         [HttpGet]
         public IEnumerable<Domain.Shipping> Get()
@@ -30,21 +30,21 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
 
         //POST
         [HttpPost]
-        public IActionResult Create([FromBody] Domain.Shipping order)
+        public async Task<IActionResult> Create([FromBody] Domain.Shipping order)
         {
             if (order == null)
             {
                 return BadRequest();
             }
 
-            _ordersStore.UpsertOrder(order);
+            var result = await _ordersStore.UpsertAsync(order);
 
-            return CreatedAtRoute("Create", new { id = order.Id }, order);
+            return CreatedAtRoute("Create", new { id = order.Id }, result);
         }
 
         // PUT
         [HttpPut("{orderId}")]
-        public IActionResult Update(string orderId, [FromBody] Domain.Shipping order)
+        public async Task<IActionResult> Update(string orderId, [FromBody] Domain.Shipping order)
         {
             if (order == null || order.Id != orderId)
             {
@@ -57,7 +57,7 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
                 return NotFound();
             }
 
-            _ordersStore.UpsertOrder(order);
+            var result = await _ordersStore.UpsertAsync(order);
             return new NoContentResult();
         }
     }
