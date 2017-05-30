@@ -6,31 +6,31 @@ using Microsoft.Knowzy.OrdersAPI.Data;
 namespace Microsoft.Knowzy.OrdersAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class ShippingController : Controller
+    public class ReceivingController : Controller
     {
         private IOrdersStore _ordersStore;
-        public ShippingController(IOrdersStore ordersStore)
+        public ReceivingController(IOrdersStore ordersStore)
         {
             _ordersStore = ordersStore;
         }
 
         // GET api/Shippping
         [HttpGet]
-        public IEnumerable<Domain.Shipping> Get()
+        public IEnumerable<Domain.Receiving> Get()
         {
-            return _ordersStore.GetShippings();
+            return _ordersStore.GetReceivings();
         }
 
-        // GET api/Shipping/5
+        // GET api/Receiving/5
         [HttpGet("{orderId}")]
-        public Domain.Shipping GetShipping(string orderId)
+        public Domain.Receiving GetReceiving(string orderId)
         {
-            return _ordersStore.GetShipping(orderId);
+            return _ordersStore.GetReceiving(orderId);
         }
 
         //POST
         [HttpPost]
-        public IActionResult Create([FromBody] Domain.Shipping order)
+        public IActionResult Create([FromBody] Domain.Receiving order)
         {
             if (order == null)
             {
@@ -44,14 +44,14 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
 
         // PUT
         [HttpPut("{orderId}")]
-        public IActionResult Update(string orderId, [FromBody] Domain.Shipping order)
+        public IActionResult Update(string orderId, [FromBody] Domain.Receiving order)
         {
             if (order == null || order.Id != orderId)
             {
                 return BadRequest();
             }
 
-            var dbOrder = _ordersStore.GetShipping(orderId);
+            var dbOrder = _ordersStore.GetReceiving(orderId);
             if (dbOrder == null)
             {
                 return NotFound();
