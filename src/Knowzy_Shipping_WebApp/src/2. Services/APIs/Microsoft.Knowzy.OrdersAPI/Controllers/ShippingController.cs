@@ -60,5 +60,12 @@ namespace Microsoft.Knowzy.OrdersAPI.Controllers
             var result = await _ordersStore.UpsertAsync(order);
             return new NoContentResult();
         }
+
+        [HttpDelete("{orderId}")]
+        public async Task<IActionResult> Delete(string orderId)
+        {
+            await _ordersStore.DeleteOrderAsync(orderId);
+            return new NoContentResult();
+        }
     }
 }

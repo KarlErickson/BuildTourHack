@@ -40,15 +40,15 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 
         public IEnumerable<Shipping> GetShippings()
         {
-            return _client.CreateDocumentQuery<Domain.Shipping>(
+            return _client.CreateDocumentQuery<Shipping>(
                 _ordersLink,
                 "SELECT * FROM orders o WHERE o.type='shipping'",
                 _options).ToList();
         }
 
-        public Domain.Shipping GetShipping(string orderId)
+        public Shipping GetShipping(string orderId)
         {
-            return _client.CreateDocumentQuery<Domain.Shipping>(
+            return _client.CreateDocumentQuery<Shipping>(
                 _ordersLink,
                 new SqlQuerySpec
                 {
@@ -61,27 +61,9 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
                 _options).FirstOrDefault();
         }
 
-    private bool disposedValue = false; // To detect redundant calls
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _client.Dispose();
-                }
-                disposedValue = true;
-            }
-        }
-
-        void IDisposable.Dispose()
-        {
-            Dispose(true);
-        }
-
         public IEnumerable<Receiving> GetReceivings()
         {
-            return _client.CreateDocumentQuery<Domain.Receiving>(
+            return _client.CreateDocumentQuery<Receiving>(
                 _ordersLink,
                 "SELECT * FROM orders o WHERE o.type='receiving'",
                 _options).ToList();
@@ -89,7 +71,7 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
 
         public Receiving GetReceiving(string orderId)
         {
-            return _client.CreateDocumentQuery<Domain.Receiving>(
+            return _client.CreateDocumentQuery<Receiving>(
                 _ordersLink,
                 new SqlQuerySpec
                 {
@@ -120,6 +102,24 @@ namespace Microsoft.Knowzy.OrdersAPI.Data
                     _ordersLink,
                     "SELECT o.postalCarrier FROM orders o",
                     _options).ToList().Distinct();
+        }
+
+        private bool disposedValue = false; // To detect redundant calls
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _client.Dispose();
+                }
+                disposedValue = true;
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
         }
     }
 }
